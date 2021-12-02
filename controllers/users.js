@@ -13,12 +13,17 @@ const getUsers = async (req, res) => {
   // const total = await User.countDocuments();
 
   // Faster simultaneous
-  const [total, users] = await Promise.all([
-    User.countDocuments(filter),
-    User.find(filter).limit(Number(limit)).skip(Number(start)),
-  ]);
 
-  res.json({ total, users });
+  try {
+    const [total, users] = await Promise.all([
+      User.countDocuments(filter),
+      User.find(filter).limit(Number(limit)).skip(Number(start)),
+    ]);
+
+    res.json({ total, users });
+  } catch (e) {
+    throw new Error(e);
+  }
 };
 
 const postUsers = async (req, res = response) => {
@@ -30,7 +35,11 @@ const postUsers = async (req, res = response) => {
   user.password = await bcrypt.hash(password, salt);
 
   // Save to db
-  await user.save();
+  try {
+    await user.save();
+  } catch (e) {
+    throw new Error(e);
+  }
 
   res.json({
     user,
@@ -49,9 +58,13 @@ const putUsers = async (req, res) => {
     userUpdated.password = await bcrypt.hash(password, salt);
   }
 
-  const user = await User.findByIdAndUpdate(id, userUpdated);
+  try {
+    const user = await User.findByIdAndUpdate(id, userUpdated);
 
-  res.json(user);
+    res.json(user);
+  } catch (e) {
+    throw new Error(e);
+  }
 };
 
 const deleteUsers = async (req, res) => {
@@ -59,9 +72,12 @@ const deleteUsers = async (req, res) => {
 
   // Really from db
   // const user = await User.findByIdAndDelete(id);
-
-  const user = await User.findByIdAndUpdate(id, { state: false });
-  res.json(user);
+  try {
+    const user = await User.findByIdAndUpdate(id, { state: false });
+    res.json(user);
+  } catch (e) {
+    throw new Error(e);
+  }
 };
 
 module.exports = { getUsers, postUsers, putUsers, deleteUsers };
