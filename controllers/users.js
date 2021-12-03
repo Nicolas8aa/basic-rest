@@ -22,7 +22,10 @@ const getUsers = async (req, res) => {
 
     res.json({ total, users });
   } catch (e) {
-    throw new Error(e);
+    console.log(e);
+    res.status(500).json({
+      msg: "Something went wrong :c",
+    });
   }
 };
 
@@ -30,20 +33,22 @@ const postUsers = async (req, res = response) => {
   const { name, email, password, role } = req.body;
   const user = new User({ name, email, password, role });
 
-  // Encript password
-  const salt = await bcrypt.genSalt();
-  user.password = await bcrypt.hash(password, salt);
-
-  // Save to db
   try {
-    await user.save();
-  } catch (e) {
-    throw new Error(e);
-  }
+    // Encript password
+    const salt = await bcrypt.genSalt();
+    user.password = await bcrypt.hash(password, salt);
 
-  res.json({
-    user,
-  });
+    // Save to db
+    await user.save();
+    res.json({
+      user,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      msg: "Something went wrong :c",
+    });
+  }
 };
 
 const putUsers = async (req, res) => {
@@ -53,30 +58,34 @@ const putUsers = async (req, res) => {
   const userUpdated = { name, role, state };
   // Validate db
 
-  if (password) {
-    const salt = await bcrypt.genSalt();
-    userUpdated.password = await bcrypt.hash(password, salt);
-  }
-
   try {
+    if (password) {
+      const salt = await bcrypt.genSalt();
+      userUpdated.password = await bcrypt.hash(password, salt);
+    }
+
     const user = await User.findByIdAndUpdate(id, userUpdated);
 
     res.json(user);
   } catch (e) {
-    throw new Error(e);
+    console.log(e);
+    res.status(500).json({
+      msg: "Something went wrong :c",
+    });
   }
 };
 
 const deleteUsers = async (req, res) => {
   const id = req.params.id;
 
-  // Really from db
-  // const user = await User.findByIdAndDelete(id);
   try {
     const user = await User.findByIdAndUpdate(id, { state: false });
     res.json(user);
   } catch (e) {
-    throw new Error(e);
+    console.log(e);
+    res.status(500).json({
+      msg: "Something went wrong :c",
+    });
   }
 };
 
