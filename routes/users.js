@@ -22,7 +22,7 @@ const {
 } = require("../controllers/users");
 const router = Router();
 
-router.get("/", getUsers);
+router.get("/", [validateJWT, isAdmin, validateFields], getUsers);
 router.post(
   "/",
   [

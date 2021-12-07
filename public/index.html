@@ -6,10 +6,69 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Forbidden</title>
+  <meta name="google-signin-client_id"
+    content="1063465289446-32icg7aako973mtb0lskpr3e991b59cu.apps.googleusercontent.com">
 </head>
 
 <body>
-  <h1>Denied access</h1>
+  <h1>Google sign in</h1>
+
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  <button id="sign-out-btn">Sign out</button>
+
+  <script>
+    function onSignIn(googleUser) {
+
+
+      let profile = googleUser.getAuthResponse().id_token;
+
+      const body = { id_token: profile }
+
+      fetch('http://localhost:8089/api/auth/google', {
+        method: "POST",
+        headers: {
+          'Content-Type': "application/json"
+        },
+        body: JSON.stringify(body)
+      })
+        .then(res => res.json())
+        .then(res => {
+          console.log(res)
+          // localStorage.setItem('email', res.user.email)
+        })
+        .catch(console.warn)
+
+
+    }
+
+    const outBtn = document.getElementById('sign-out-btn');
+
+
+    // Other way
+    // outBtn.onclick = () => {
+    //   console.log(google.accounts.id)
+    //   google.accounts.id.disableAutoSelect();
+    //   google.accounts.id.revoke(localStorage.getItem('email'), done => {
+    //     localStorage.clear();
+    //     location.reload()
+    //   })
+
+    // }
+
+
+    outBtn.onclick = signOut;
+
+    function signOut() {
+      var auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(function () {
+        console.log('User signed out.');
+      });
+    }
+
+  </script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
 </body>
 
 </html>

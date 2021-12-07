@@ -21,6 +21,7 @@ const UserSchema = Schema({
     type: String,
     required: true,
     emun: ["ADMIN", "USER"],
+    default: "USER",
   },
   state: {
     type: Boolean,
