@@ -6,9 +6,8 @@ const isAdmin = (req, res, next) => {
   }
 
   const { role, name } = req.user;
-
   if (role !== "ADMIN") {
-    res.status(401).json({
+    return res.status(401).json({
       msg: `${name} is not authorized to perform this action`,
     });
   }

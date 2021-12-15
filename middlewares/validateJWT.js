@@ -26,7 +26,7 @@ const validateJWT = async (req, res, next) => {
         msg: "Invalid token - inactive user",
       });
 
-    req.user = user;
+    req.user = user.toJSON();
 
     next();
   } catch (e) {

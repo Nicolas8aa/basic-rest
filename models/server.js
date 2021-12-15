@@ -2,14 +2,19 @@ const express = require("express");
 const cors = require("cors");
 const { dbConnection } = require("../db/config");
 
-// Routes | controllers
-const userRoutes = require("../routes/users");
-const authRoutes = require("../routes/auth");
-
 class Server {
   constructor() {
     this.app = express();
     this.port = process.env.PORT;
+
+    // Paths
+    this.paths = {
+      auth: "/api/auth",
+      categories: "/api/categories",
+      search: "/api/search",
+      products: "/api/products",
+      users: "/api/users",
+    };
 
     // Connect to db
     this.connectDB();
@@ -34,8 +39,11 @@ class Server {
   }
 
   routes() {
-    this.app.use("/api/users", userRoutes);
-    this.app.use("/api/auth", authRoutes);
+    this.app.use(this.paths.auth, require("../routes/auth"));
+    this.app.use(this.paths.categories, require("../routes/categories"));
+    this.app.use(this.paths.products, require("../routes/products"));
+    this.app.use(this.paths.users, require("../routes/users"));
+    this.app.use(this.paths.search, require("../routes/search"));
   }
 
   listen() {
