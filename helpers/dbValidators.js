@@ -38,10 +38,22 @@ const existProduct = async (id = "") => {
     throw new Error(`Product with id ${id} is not active, talk to admin`);
 };
 
+// Validate alllow collections
+
+const allowedCollections = (collection = "", collections = []) => {
+  const isAllow = collections.includes(collection);
+  if (!isAllow)
+    throw new Error(
+      `Collection ${collection} forbidden, availables: ${collections}`
+    );
+  return true;
+};
+
 module.exports = {
   isValidRole,
   existEmail,
   existUser,
   existCategory,
   existProduct,
+  allowedCollections,
 };
